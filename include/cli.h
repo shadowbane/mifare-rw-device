@@ -141,7 +141,7 @@ void help_help(){
         Serial.println(commands_str[i]);
     }
     Serial.println("");
-    Serial.println("You can for instance type \"help led\" for more info on the LED command.");
+    Serial.println("You can for instance type \"help read\" for more info on the LED command.");
 }
  
 // void help_led(){
