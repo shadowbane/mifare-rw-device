@@ -2,13 +2,8 @@ void execReader()
 {
     // Prepare key - all keys are set to FFFFFFFFFFFFh at chip delivery from the factory.
     MFRC522::MIFARE_Key key;
-    // for (byte i = 0; i < 6; i++)
-        key.keyByte[0] = 0xB7;
-        key.keyByte[1] = 0x17;
-        key.keyByte[2] = 0xEB;
-        key.keyByte[3] = 0xA1;
-        key.keyByte[4] = 0x23;
-        key.keyByte[5] = 0x45;
+    for (byte i = 0; i < 6; i++)
+        key.keyByte[i] = 0xFF;
 
     //some variables we need
     byte block;
