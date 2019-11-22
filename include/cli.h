@@ -52,7 +52,7 @@ void read_line(){
     
     if(line_string.length() < LINE_BUF_SIZE){
         line_string.toCharArray(line, LINE_BUF_SIZE);
-        Serial.print(line_string);
+        Serial.println(line_string);
     }
     else{
         Serial.println("Input string too long.");

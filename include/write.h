@@ -17,15 +17,11 @@ void execWriter()
         return;
     }
 
-    Serial.print(F("Card UID:")); //Dump UID
-    for (byte i = 0; i < mfrc522.uid.size; i++)
-    {
-        Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
-        Serial.print(mfrc522.uid.uidByte[i], HEX);
-    }
-    Serial.print(F(" PICC type: ")); // Dump PICC type
-    MFRC522::PICC_Type piccType = mfrc522.PICC_GetType(mfrc522.uid.sak);
-    Serial.println(mfrc522.PICC_GetTypeName(piccType));
+    Serial.println(F("**Card Detected:**"));
+
+    //-------------------------------------------
+
+    mfrc522.PICC_DumpDetailsToSerial(&(mfrc522.uid)); //dump some details about the card
 
     byte buffer[34];
     byte block;
@@ -49,7 +45,7 @@ void execWriter()
         return;
     }
 
-    // Write block
+    // Write block 1
     status = mfrc522.MIFARE_Write(block, buffer, 16);
     if (status != MFRC522::STATUS_OK)
     {
@@ -58,36 +54,38 @@ void execWriter()
         return;
     }
     else
-        Serial.println(F("MIFARE_Write() success: "));
+        Serial.print(F("MIFARE_Write() success! \n"));
 
-    block = 2;
-    //Serial.println(F("Authenticating using key A..."));
-    status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, &key, &(mfrc522.uid));
-    if (status != MFRC522::STATUS_OK)
-    {
-        Serial.print(F("PCD_Authenticate() failed: "));
-        Serial.println(mfrc522.GetStatusCodeName(status));
-        return;
-    }
+    // block = 2;
+    // //Serial.println(F("Authenticating using key A..."));
+    // status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, &key, &(mfrc522.uid));
+    // if (status != MFRC522::STATUS_OK)
+    // {
+    //     Serial.print(F("PCD_Authenticate() failed: "));
+    //     Serial.println(mfrc522.GetStatusCodeName(status));
+    //     return;
+    // }
 
-    // Write block
-    status = mfrc522.MIFARE_Write(block, &buffer[16], 16);
-    if (status != MFRC522::STATUS_OK)
-    {
-        Serial.print(F("MIFARE_Write() failed: "));
-        Serial.println(mfrc522.GetStatusCodeName(status));
-        return;
-    }
-    else
-        Serial.println(F("MIFARE_Write() success: "));
+    // // Write block 2
+    // status = mfrc522.MIFARE_Write(block, &buffer[16], 16);
+    // if (status != MFRC522::STATUS_OK)
+    // {
+    //     Serial.print(F("MIFARE_Write() failed: "));
+    //     Serial.println(mfrc522.GetStatusCodeName(status));
+    //     return;
+    // }
+    // else
+    //     Serial.println(F("MIFARE_Write() success: "));
 
-    Serial.println(F("\n**End Reading**\n"));
+    Serial.println(F("\n**End Writing**\n"));
     delay(1000); //change value if you want to read cards faster
-
+    
     mfrc522.PICC_HaltA();
     mfrc522.PCD_StopCrypto1();
 
     readerMode = "";
-    Serial.println("type help for info");
+    
+    Serial.println("");
     my_cli();
+    Serial.println("");
 }

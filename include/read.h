@@ -41,7 +41,7 @@ void execReader()
     block = 1;
     len = 18;
 
-    //------------------------------------------- GET NIM
+    //------------------------------------------- GET NIM On Block 1
     status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, &key, &(mfrc522.uid)); //line 834 of MFRC522.cpp file
     if (status != MFRC522::STATUS_OK)
     {
@@ -98,7 +98,6 @@ void execReader()
     //----------------------------------------
 
     Serial.println(F("\n**End Reading**\n"));
-
     delay(1000); //change value if you want to read cards faster
 
     mfrc522.PICC_HaltA();
