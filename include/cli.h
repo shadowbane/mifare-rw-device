@@ -13,13 +13,13 @@ char line[LINE_BUF_SIZE];
 char args[MAX_NUM_ARGS][ARG_BUF_SIZE];
 
 //Function declarations
-int cmd_help();
-int cmd_exit();
-int cmd_read();
-int cmd_write();
+void cmd_help();
+void cmd_read();
+void cmd_write();
+void cmd_exit();
  
 //List of functions pointers corresponding to each command
-int (*commands_func[])(){
+void (*commands_func[])(){
     &cmd_help,
     &cmd_read,
     &cmd_write,
@@ -85,7 +85,7 @@ void parse_line(){
     }
 }
 
-int execute(){  
+void execute(){  
     for(int i=0; i<num_commands; i++){
         if(strcmp(args[0], commands_str[i]) == 0){
             return(*commands_func[i])();
@@ -93,7 +93,6 @@ int execute(){
     }
  
     Serial.println("Invalid command. Type \"help\" for more.");
-    return 0;
 }
 
 void my_cli(){
@@ -139,7 +138,7 @@ void help_write() {
     Serial.println("This will write '1234567890' on first block of RFID Tag");
 }
 
-int cmd_help(){
+void cmd_help(){
     if(args[1] == NULL){
         help_help();
     }
@@ -160,17 +159,22 @@ int cmd_help(){
     }
 }
 
-int cmd_read(){
+void cmd_read(){
     Serial.println("Waiting RFID..");
     readerMode = "read";
 }
 
-int cmd_write(){
+void cmd_write(){
     Serial.println("Writing data to RFID...");
     readerMode = "write";
 }
  
-int cmd_exit(){
+void cmd_exit(){
     Serial.println("Exiting CLI.");
+
+    #ifdef PLATFORM_ESP8266
     ESP.restart();
+    #elif defined(PLATFORM_ESP32)
+    ESP.restart();
+    #endif
 }

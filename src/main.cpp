@@ -11,6 +11,12 @@ String platform = "esp8266";
 #define RST_PIN         D3          // Configurable, see typical pin layout above
 #define SS_PIN          D8          // Configurable, see typical pin layout above
 String platform = "esp32";
+#elif defined(PLATFORM_PROMICRO)
+#define RST_PIN         9           // Configurable, see typical pin layout above
+#define SS_PIN          10          // Configurable, see typical pin layout above
+const int buzzer = 7;
+const int led = 5;
+const bool is_promicro = 1;
 #endif
 
 #include <SPI.h>
@@ -23,6 +29,12 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance
 #include <write.h>
 
 void setup() {
+
+    if (is_promicro) {
+        pinMode(buzzer, OUTPUT);
+        pinMode(led, INPUT_PULLUP);
+    }
+
     Serial.begin(115200);
     SPI.begin();
     mfrc522.PCD_Init();

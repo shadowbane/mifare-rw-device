@@ -84,8 +84,6 @@ void execWriter()
     mfrc522.PCD_StopCrypto1();
 
     readerMode = "";
-    
-    Serial.println("");
+    delay(1000);
     my_cli();
-    Serial.println("");
 }
