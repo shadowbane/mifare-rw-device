@@ -18,6 +18,13 @@ const int buzzer = 7;
 const int led = 5;
 const bool is_promicro = 1;
 int ledPin = LED_BUILTIN;
+#elif defined(PLATFORM_MICRO)
+#define RST_PIN         9           // Configurable, see typical pin layout above
+#define SS_PIN          10          // Configurable, see typical pin layout above
+const int buzzer = 11;
+const int led = 4;
+const bool is_promicro = 0;
+int ledPin = LED_BUILTIN;
 #endif
 
 bool disconnected = 0;
