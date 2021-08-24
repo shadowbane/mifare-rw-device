@@ -39,14 +39,21 @@ void setup() {
     SPI.begin();
     mfrc522.PCD_Init();
     cli_init();
+
+    tone(buzzer, 5000); // Send 1KHz sound signal...
+    digitalWrite(led, HIGH);
+    delay(100);        // ...for 1 sec
+    noTone(buzzer);     // Stop sound...
+    digitalWrite(led, LOW);
 }
 
 void loop() {
-    if (readerMode == "read") {
-        execReader();
-    } else if (readerMode == "write") {
-        execWriter();
-    } else {
-        my_cli();
-    }
+    execWriter();
+    // if (readerMode == "read") {
+    //     execReader();
+    // } else if (readerMode == "write") {
+    //     execWriter();
+    // } else {
+    //     my_cli();
+    // }
 }

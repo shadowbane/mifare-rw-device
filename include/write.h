@@ -85,5 +85,4 @@ void execWriter()
 
     readerMode = "";
     delay(1000);
-    my_cli();
 }
