@@ -14,7 +14,7 @@ String platform = "esp32";
 #elif defined(PLATFORM_PROMICRO)
 #define RST_PIN         9           // Configurable, see typical pin layout above
 #define SS_PIN          10          // Configurable, see typical pin layout above
-const int buzzer = 7;
+const int buzzer = 8;
 const int led = 5;
 const bool is_promicro = 1;
 #endif
@@ -38,7 +38,6 @@ void setup() {
     Serial.begin(115200);
     SPI.begin();
     mfrc522.PCD_Init();
-    cli_init();
 
     tone(buzzer, 5000); // Send 1KHz sound signal...
     digitalWrite(led, HIGH);
@@ -48,12 +47,14 @@ void setup() {
 }
 
 void loop() {
-    execWriter();
-    // if (readerMode == "read") {
-    //     execReader();
-    // } else if (readerMode == "write") {
-    //     execWriter();
-    // } else {
-    //     my_cli();
-    // }
+    // execWriter();
+    if (readerMode == "read") {
+        execReader();
+    } else if (readerMode == "write") {
+        execWriter();
+    } else {
+        Serial.println(String(error_flag));
+        cli_init();
+        my_cli();
+    }
 }

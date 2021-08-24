@@ -5,6 +5,7 @@
 String readerMode = "";
 String nim = "";
 String name = "";
+String line_string = "";
 
 int ledPin = LED_BUILTIN;
 bool error_flag = false;
@@ -42,8 +43,6 @@ void cli_init(){
 }
 
 void read_line(){
-    String line_string;
- 
     while(!Serial.available());
  
     if(Serial.available()){
@@ -72,8 +71,7 @@ void parse_line(){
                 strcpy(args[counter],argument);
                 argument = strtok(NULL, " ");
                 counter++;
-            }
-            else{
+            } else {
                 Serial.println("Input string too long.");
                 error_flag = true;
                 break;
@@ -95,7 +93,17 @@ void execute(){
     Serial.println("Invalid command. Type \"help\" for more.");
 }
 
+void reset_cli()
+{
+    memset(line, 0, LINE_BUF_SIZE);
+    memset(args, 0, sizeof(args[0][0]) * MAX_NUM_ARGS * ARG_BUF_SIZE);
+    line_string = "";
+ 
+    error_flag = false;
+}
+
 void my_cli(){
+    reset_cli();
     Serial.print("> ");
  
     read_line();
@@ -105,11 +113,8 @@ void my_cli(){
     if(!error_flag){
         execute();
     }
- 
-    memset(line, 0, LINE_BUF_SIZE);
-    memset(args, 0, sizeof(args[0][0]) * MAX_NUM_ARGS * ARG_BUF_SIZE);
- 
-    error_flag = false;
+
+    reset_cli();
 }
  
 void help_help(){
@@ -170,11 +175,12 @@ void cmd_write(){
 }
  
 void cmd_exit(){
-    Serial.println("Exiting CLI.");
+    Serial.println("Rebooting Device...");
 
     #ifdef PLATFORM_ESP8266
     ESP.restart();
     #elif defined(PLATFORM_ESP32)
     ESP.restart();
+    #elif defined(PLATFORM_PROMICRO)
     #endif
 }

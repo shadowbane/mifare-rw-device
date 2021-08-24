@@ -104,5 +104,4 @@ void execReader()
     mfrc522.PCD_StopCrypto1();
 
     readerMode = "";
-    my_cli();
 }

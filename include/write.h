@@ -1,3 +1,72 @@
+bool readIdentifier(MFRC522::MIFARE_Key key)
+{
+    //some variables we need
+    byte block = 1;
+    byte len = 18;
+    byte buffer1[18];
+    MFRC522::StatusCode status;
+
+    status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, &key, &(mfrc522.uid)); //line 834 of MFRC522.cpp file
+    if (status != MFRC522::STATUS_OK)
+    {
+        Serial.print(F("Authentication failed: "));
+        Serial.println(mfrc522.GetStatusCodeName(status));
+        Serial.println(F("\n**End Reading**\n"));
+
+        mfrc522.PICC_HaltA();
+        mfrc522.PCD_StopCrypto1();
+        return false;
+    }
+
+    status = mfrc522.MIFARE_Read(block, buffer1, &len);
+    if (status != MFRC522::STATUS_OK)
+    {
+        Serial.print(F("Reading failed: "));
+        Serial.println(mfrc522.GetStatusCodeName(status));
+        Serial.println(F("\n**End Reading**\n"));
+
+        mfrc522.PICC_HaltA();
+        mfrc522.PCD_StopCrypto1();
+        return false;
+    }
+
+    // buzzer
+    tone(buzzer, 5000); // Send 1KHz sound signal...
+    digitalWrite(led, HIGH);
+    delay(100);        // ...for 1 sec
+    noTone(buzzer);     // Stop sound...
+    digitalWrite(led, LOW);
+
+    delay(50);        // ...for 1 sec
+
+    tone(buzzer, 5000); // Send 1KHz sound signal...
+    digitalWrite(led, HIGH);
+    delay(100);        // ...for 1 sec
+    noTone(buzzer);     // Stop sound...
+    digitalWrite(led, LOW);
+
+    //PRINT Identifier
+    char var;
+    String Identifier;
+    for (uint8_t i = 0; i < 16; i++)
+    {
+        if (buffer1[i] != 32)
+        {
+            var = buffer1[i];
+            if (var != '\n' && var != '\r') {
+                Identifier.concat(String(var));
+            }
+        }
+    }
+
+    Serial.print(F("Identifier: "));
+    Serial.print(Identifier);
+    Serial.println("");
+    Serial.println("");
+
+    return true;
+}
+
 void execWriter()
 {
     // Prepare key - all keys are set to FFFFFFFFFFFFh at chip delivery from the factory.
@@ -23,15 +92,19 @@ void execWriter()
 
     mfrc522.PICC_DumpDetailsToSerial(&(mfrc522.uid)); //dump some details about the card
 
+    if (!readIdentifier(key)) {
+        return;
+    }
+
     byte buffer[34];
     byte block;
     MFRC522::StatusCode status;
     byte len;
 
     Serial.setTimeout(20000L); // wait until 20 seconds for input from serial
-    // Ask personal data: NIM
-    Serial.println(F("Type NIM, ending with #"));
-    len = Serial.readBytesUntil('#', (char *)buffer, 20); // read NIM from serial
+    // Ask personal data: Identifier
+    Serial.println(F("Type Identifier, ending with #"));
+    len = Serial.readBytesUntil('#', (char *)buffer, 20); // read Identifier from serial
     for (byte i = len; i < 20; i++)
         buffer[i] = ' '; // pad with spaces
 
@@ -84,5 +157,4 @@ void execWriter()
     mfrc522.PCD_StopCrypto1();
 
     readerMode = "";
-    delay(1000);
 }
